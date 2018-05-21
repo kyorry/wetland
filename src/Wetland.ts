@@ -1,17 +1,17 @@
-import {EntityManager} from './EntityManager';
-import {Store, PoolConfig, ReplicationConfig, SingleConfig} from './Store';
-import {Homefront} from 'homefront';
-import {Scope} from './Scope';
-import {EntityInterface, EntityCtor} from './EntityInterface';
-import {Migrator} from './Migrator/Migrator';
+import { EntityManager } from './EntityManager';
+import { Store, PoolConfig, ReplicationConfig, SingleConfig } from './Store';
+import { Homefront } from 'homefront';
+import { Scope } from './Scope';
+import { EntityInterface, EntityCtor } from './EntityInterface';
+import { Migrator } from './Migrator/Migrator';
 import * as fs from 'fs';
 import * as mkdirp from 'mkdirp';
 import * as path from 'path';
-import {SnapshotManager} from './SnapshotManager';
-import {SchemaManager} from './SchemaManager';
-import {Populate} from './Populate';
-import {Seeder} from './Seeder';
-import {Cleaner} from './Cleaner';
+import { SnapshotManager } from './SnapshotManager';
+import { SchemaManager } from './SchemaManager';
+import { Populate } from './Populate';
+import { Seeder } from './Seeder';
+import { Cleaner } from './Cleaner';
 
 export class Wetland {
   /**
@@ -33,15 +33,15 @@ export class Wetland {
    * @type {Homefront}
    */
   private config: Homefront = new Homefront({
-    debug         : false,
+    debug: false,
     useForeignKeys: true,
-    dataDirectory : path.resolve(process.cwd(), '.data'),
-    defaultStore  : 'defaultStore',
-    mapping       : {
+    dataDirectory: path.resolve(process.cwd(), '.data'),
+    defaultStore: 'defaultStore',
+    mapping: {
       defaultNamesToUnderscore: false,
-      defaults                : {cascades: []}
+      defaults: { cascades: [] }
     },
-    entityManager : {
+    entityManager: {
       refreshCreated: true,
       refreshUpdated: true
     }
@@ -63,6 +63,9 @@ export class Wetland {
    * @param {{}} [config]
    */
   public constructor(config?: Object) {
+    if (config['dataDirectory']) {
+      this.config.put('dataDirectory', config['dataDirectory']);
+    }
     this.ensureDataDirectory(this.config.fetch('dataDirectory'));
     this.setupExitListeners();
     this.initializeConfig(config);
@@ -78,10 +81,10 @@ export class Wetland {
       this.config.merge(config);
     }
 
-    let stores      = this.config.fetch('stores');
-    let entities    = this.config.fetch('entities');
+    let stores = this.config.fetch('stores');
+    let entities = this.config.fetch('entities');
     let entityPaths = this.config.fetch('entityPaths', []);
-    let entityPath  = this.config.fetch('entityPath');
+    let entityPath = this.config.fetch('entityPath');
 
     if (stores) {
       this.registerStores(stores);
@@ -106,9 +109,9 @@ export class Wetland {
         .filter(match => match.search(/\.js$/) > -1)
         .map(entity => entity.replace(/\.js$/, ''))
         .forEach(entity => {
-          let filePath     = path.resolve(entityPath, entity);
+          let filePath = path.resolve(entityPath, entity);
           let entityModule = require(filePath);
-          let ToRegister   = entityModule;
+          let ToRegister = entityModule;
 
           if (typeof ToRegister !== 'function') {
             ToRegister = entityModule.default;
@@ -350,9 +353,9 @@ export class Wetland {
     }
 
     this.registerStore(this.config.fetch('defaultStore'), {
-      client          : 'sqlite3',
+      client: 'sqlite3',
       useNullAsDefault: true,
-      connection      : {filename: `${this.config.fetch('dataDirectory')}/wetland.sqlite`}
+      connection: { filename: `${this.config.fetch('dataDirectory')}/wetland.sqlite` }
     });
   }
 
