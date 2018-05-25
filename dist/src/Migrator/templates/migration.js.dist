@@ -1,0 +1,11 @@
+class Migration {
+  static up(migration) {
+{{ up }}
+  }
+
+  static down(migration) {
+{{ down }}
+  }
+}
+
+module.exports.Migration = Migration;
